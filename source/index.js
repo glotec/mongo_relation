@@ -31,5 +31,42 @@ async function createPublisher(companyName, firstParty, website)
     console.log(result);
 }
 
+async function createGame (title, publisher) 
+{
+    const game = new Game({
+        title,
+        publisher: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Publisher'
+        }
+    });
+
+    const result = await game.save();
+    console.log(result);
+}
+
+// async function listGames()
+// {
+//     const games = await Game
+//         .find()
+//         .select('title');
+//     console.log(games);
+// }
+
+async function listGames()
+{
+    const games = await Game
+        .find()
+        .populate('publisher', 'companyName')
+        .select('title publisher');
+    console.log(games);
+}
+
+listGames();
+console.log('Pub');
+
+// createPublisher('Glotec Game', true, 'https://www.glotec.com/');
+// createGame('Glo Design', '5fd601263e4d7804d079fe34');
+
 
 app.listen(port, () => console.log(`Server started on http://localhost:${port}`));
