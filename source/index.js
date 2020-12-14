@@ -16,7 +16,11 @@ const Publisher = mongoose.model('Publisher', new mongoose.Schema({
 }));
 
 const Game = mongoose.model('Game', new mongoose.Schema({
-    title: String
+    title: String,
+    publisher: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Publisher'
+    }
 }));
 
 async function createPublisher(companyName, firstParty, website)
@@ -35,10 +39,7 @@ async function createGame (title, publisher)
 {
     const game = new Game({
         title,
-        publisher: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Publisher'
-        }
+        publisher
     });
 
     const result = await game.save();
@@ -51,13 +52,22 @@ async function createGame (title, publisher)
 //         .find()
 //         .select('title');
 //     console.log(games);
+// // }
+
+// async function listGames()
+// {
+//     const games = await Game
+//         .find()
+//         .populate('publisher', 'companyName')
+//         .select('title publisher');
+//     console.log(games);
 // }
 
 async function listGames()
 {
     const games = await Game
         .find()
-        .populate('publisher', 'companyName')
+        .populate('publisher', 'companyName-_id')
         .select('title publisher');
     console.log(games);
 }
@@ -65,8 +75,9 @@ async function listGames()
 listGames();
 console.log('Pub');
 
-// createPublisher('Glotec Game', true, 'https://www.glotec.com/');
-// createGame('Glo Design', '5fd601263e4d7804d079fe34');
+// createPublisher('Glotec', true, 'https://www.glotec.com/');
+// createGame('Glo1 Design', '5fd71b6858827c132076ff72');
 
 
-app.listen(port, () => console.log(`Server started on http://localhost:${port}`));
+app.listen(port, 
+    () => console.log(`Server started on http://localhost:${port}`));
